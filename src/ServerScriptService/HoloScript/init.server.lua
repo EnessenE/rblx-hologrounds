@@ -1276,7 +1276,8 @@ function createadmin(player)
         _G.MakeGui(player.Name .. " is a core admin!", systemname, 3, player.Name)
     elseif coreadmin.Value == true then
         _G.MakeGui(player.Name .. " is an admin!", systemname, 3, player.Name)
-    end
+	end
+	_G.MakeGui("As a reminder, use !commands for all commands. Use !maps for all maps, !gamemodes for all gamemodes.", systemname, 5, "all")
 end
 
 function handleKillCount(humanoid, player) --Unused, replaced for wARC scripts.
@@ -1629,7 +1630,7 @@ _G["MakeGui" .. _G.valkey] = function(text, who, time, towho)
 					--local Service = game:GetService("TextChatService")
 					--Service.TextChannels.RBXSystem:DisplaySystemMessage("[" .. who .. "]: " .. text)
 					--game.TextChatService.TextChannels.RBXGeneral:DisplaySystemMessage("[" .. who .. "]: " .. text)
-					ServerMessageEvent:FireAllClients("[" .. who .. "]: " .. text)
+					ServerMessageEvent:FireAllClients("" .. who .. ": " .. text)
 					
                     --_G.Talk111("[" .. who .. "]: " .. text, "IRIS")
                 end
