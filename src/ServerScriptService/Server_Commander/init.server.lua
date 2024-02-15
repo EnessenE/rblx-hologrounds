@@ -1319,6 +1319,6 @@ end)
 for _, player in pairs(game.Players:GetPlayers()) do
 	initPlayer(player)
 end
-warn("Starter the server commander")
+warn("Started the server commander")
 
 --My only friend, the end.

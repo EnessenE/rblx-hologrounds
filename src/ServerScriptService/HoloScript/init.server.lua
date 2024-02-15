@@ -44,14 +44,17 @@ local tableversion = {
     "V1.492 - Added Dust(TDM, FFA, CTP)",
 	"V1.493 - Updated chat, you now spawn closer for all obstacle and swordfight sims.",
 	"V1.494 - Fixed obstacles5, fixed all TDM spawn issues, fixed chat not loading",
-	"V1.5 - Auto mode. !automode to toggle. Fixed juggernaut"
+	"V1.5 - Auto mode. !automode to toggle. Fixed juggernaut",
+	"V1.51 - Fixed chat, misc errors",
 }
 
 script.GUI:WaitForChild("HoloGUI")
 _G.VSA1 = tableversion
 _G.VSA2 = tableversion[#tableversion]
 
-game.ServerStorage.Sounds:Destroy() --Fix for studio glitch, unused anyway
+local ServerMessageEvent = Instance.new("RemoteEvent")
+ServerMessageEvent.Name = "ServerMessageEvent"
+ServerMessageEvent.Parent = game.ReplicatedStorage
 
 local automode = true
 
@@ -72,7 +75,7 @@ deathsname = "Wipeouts" --needs to be always set for TDM and elimination
 
 local defaultwalkspeed = 16
 local defaulthealth = 100
-local defaultjump = 50
+local defaultjump = 50 
 
 _G.valkey = math.random(1, 9999) --randomizer to not override _G with other scripts. ("But enes, why didnt you just call it something else") Because I can. also had a idea for it but i forgot
 _G.plrwalkspeed = defaultwalkspeed --Default settings for players, usefull in special simulations as this allows you to keep it after the players respawn
@@ -88,6 +91,7 @@ trainerteam = game.Teams.Trainers --Path to Trainers team
 traineeteam = game.Teams.Trainees --Path to Trainees team
 maploadlocation = workspace.HoloScript --Location of where all maps are placed when loaded. I would recommend keeping it to this.
 
+local chatService = game:GetService("Chat")
 local Http = game:GetService("HttpService")
 local webHook = require(game.ServerScriptService.WebhookAPI)
 local myWebHook =
@@ -111,7 +115,6 @@ disableALLmessages = false --disables ALL messages created by this script
 defaulttime = 10 --default msg time if non is set
 mesmode = 4 --msg mode, 1 is with a default workspace message. 2 is a VERY simple gui. The gui is there if you want add costumization or something  �\_(?)_/�
 messagetimeout = 1 --If multiple messages are called at the same time, this is how long the second message will wait until it overrides the one before it.
-maxxtrick = 10 --Unused ATM
 autosimulation = true --automatic tries to get all simulations if true. If false it needs to do it manually.
 simlocation = game.ServerStorage.Sims --Location of simulations
 guilocation = script.GUI --Location of GUI it uses to show messages to player
@@ -142,7 +145,7 @@ _G.enforceddeathlimit = false --keep on false. This is set by script
 defaultdeathlimit = 1 --This deathlimit is default.
 _G.deathlimit = defaultdeathlimit
 
-juggernauthealth = 200 --Juggernaut health per player
+juggernauthealth = 350 --Juggernaut health per player
 juggernautspeed = 20 --Juggernaut walkspeed
 juggernautjump = 45 --Juggernaut jumppowere
 juggernautweapons = {"T11", "SKP", "L95"} --Weapons for the opposing team
@@ -1622,8 +1625,13 @@ _G["MakeGui" .. _G.valkey] = function(text, who, time, towho)
                                 myWebHook:post {username = who, content = text}
                             end
                         )
-                    )
-                    _G.Talk111("[" .. who .. "]: " .. text, "IRIS")
+					)
+					--local Service = game:GetService("TextChatService")
+					--Service.TextChannels.RBXSystem:DisplaySystemMessage("[" .. who .. "]: " .. text)
+					--game.TextChatService.TextChannels.RBXGeneral:DisplaySystemMessage("[" .. who .. "]: " .. text)
+					ServerMessageEvent:FireAllClients("[" .. who .. "]: " .. text)
+					
+                    --_G.Talk111("[" .. who .. "]: " .. text, "IRIS")
                 end
             end
         )
